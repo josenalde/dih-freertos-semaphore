@@ -8,7 +8,7 @@
 #define BTN_PIN 18
 
 SemaphoreHandle_t SMF;
-TaskHandle_t handleIsrTask;
+TaskHandle_t handleTask;
 
 void IRAM_ATTR isr() { // não pode ser mutex dentro de isr
     xSemaphoreGiveFromISR(SMF, NULL); //Libera o semaforo (sem_wait semaphore.h) colocando em estado 1
@@ -56,7 +56,7 @@ void setup() {
     attachInterrupt(BTN_PIN, isr, FALLING);
 
     SMF = xSemaphoreCreateBinary(); //semaforo binario
-    xTaskCreatePinnedToCore(handleIsrTask, "handleIsrTask" , 4096 , NULL, 1 , &handleIsrTask, 0); 
+    xTaskCreatePinnedToCore(handleIsrTask, "handleIsrTask" , 4096 , NULL, 1 , &handleTask, 0); 
     //Cria a tarefa que analisa o semaforo
     //handle da função, alias para debug, stack size em bytes, parametro void* para a task, prioridade (1-25), no FreeRTOS ESP32 quanto maior,
     // maior a prioridade, sexto parâmetro não usado (local para guardar ID da task), afinidade do núcleo (0 PRO_CPU, 1 APP_CPU, tskNO_AFFINITY)
